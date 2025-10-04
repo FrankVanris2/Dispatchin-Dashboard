@@ -1,4 +1,6 @@
 # This is the Ticket Service (CORE Business Logic that is necessary)
+from interfaces.data_repository import ITicketRepository
+from models import ArchivedTicket
 
 class TicketService:
     """ Handles the business logic: calculating points, moving data, and aggregation. """

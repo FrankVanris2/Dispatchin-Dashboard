@@ -1,8 +1,6 @@
 # Defining the Interface that will cause loose coupling
+from models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
 from abc import ABC, abstractmethod
-from datetime import datetime
-import uuid
-import random
 
 
 class ITicketRepository(ABC):
