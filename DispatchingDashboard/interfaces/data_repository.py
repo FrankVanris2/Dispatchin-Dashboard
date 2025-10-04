@@ -1,5 +1,5 @@
 # Defining the Interface that will cause loose coupling
-from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
+from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket, Resource_SkillGroup
 from abc import ABC, abstractmethod
 
 
@@ -23,6 +23,10 @@ class ITicketRepository(ABC):
 
     @abstractmethod
     def get_ticket_by_id(self, ticket_id: str) -> VirtualQueueTicket:
+        pass
+
+    @abstractmethod
+    def get_resources_skillgroups(self) -> list[Resource_SkillGroup]:
         pass
 
     @abstractmethod

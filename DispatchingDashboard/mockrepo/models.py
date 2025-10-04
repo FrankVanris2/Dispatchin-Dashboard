@@ -16,10 +16,13 @@ class SkillGroup:
         self.points = points
     
     def to_dict(self):
-        return {"id": self.skillGroupID, "name": self.name, "points": self.points}
+        return {"id": self.skillGroupID, 
+                "name": self.name, 
+                "points": self.points
+                }
     
 
-# Engineers known as Resource
+# --- Resource (Engineer) Table --- #
 class Resource:
     """ Mirrors the Resource ERD tablee (the engineer). """
     def __init__(self, resourceID: str, name: str):
@@ -29,7 +32,7 @@ class Resource:
     def to_dict(self):
         return {"id": self.resourceID, "name": self.name}
     
-# Tickets currently in the queue
+# --- Virtual Queue Tickets Table --- #
 class VirtualQueueTicket:
     """ Mirrors the VirtualQueueTicket ERD table. """
     def __init__(self, skillGroupID: str, priority: int, expected_minutes: int):
@@ -44,7 +47,8 @@ class VirtualQueueTicket:
     def to_dict(self):
         # Format dates for cleaner JSON
         return {k: v.isoformat() if isinstance(v, datetime) else v for k, v in self.__dict__.items()}
-    
+
+# --- Archived Tickets Table --- #
 class ArchivedTicket(VirtualQueueTicket): # Most likely need to update I believe I need the SkillGroup info
     """ Extends VirtualQueueTicket with completion fields. """
     def __init__(self, ticket: VirtualQueueTicket, skillGroupID: str, resourceID: str, points_awarded: int):
@@ -72,7 +76,7 @@ class ArchivedTicket(VirtualQueueTicket): # Most likely need to update I believe
         })
         return data
 
-# Added table for the combination between Resource (Engineer) and Skill Group
+# --- Resource_SkillGroup Table --- #
 class Resource_SkillGroup(Resource, SkillGroup):
     # The combination between the Engineer and their skill group
     def __init__(self, id: str, skillGroupID: str, resourceID: str):
@@ -81,5 +85,8 @@ class Resource_SkillGroup(Resource, SkillGroup):
         self.resourceID = resourceID
     
     def to_dict(self): 
-        return {"id": self.id, "skillGroupID": self.skillGroupID, "resourceID": self.resourceID}
+        return {"id": self.id, 
+                "skillGroupID": self.skillGroupID, 
+                "resourceID": self.resourceID
+                }
 

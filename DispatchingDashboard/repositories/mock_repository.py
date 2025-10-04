@@ -1,7 +1,8 @@
 # Mock Repository for the foundation of the different tables that was given
 from interfaces.data_repository import ITicketRepository
-from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
+from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket, Resource_SkillGroup
 import random
+import itertools
 
 # Tables VirtualQueueTicket, ArchivedTicket, SkillGroup, Resource, Resource_SkillGroup
 
@@ -17,6 +18,7 @@ class MockTicketRepository(ITicketRepository):
         self._resources = {}
         self._queue = {}
         self._archive = []
+        self._resource_skill_groups = []
         self._points_map = {
             'Line1': 100,
             'Line2': 200,
@@ -24,7 +26,10 @@ class MockTicketRepository(ITicketRepository):
         }
     
     def initialize_mock_data(self):
-        """ Pre-populate data for demonstration. """
+        """ 
+        Pre-populate data for demonstration. 
+        Note: The Resource_SkillGroup table is populated based on the archived tickets.
+        """
         self._skill_groups = {
             'L1': SkillGroup('L1', 'Line1 (Easiest)', self._points_map['Line1']),
             'L2': SkillGroup('L2', 'Line2 (Medium)', self._points_map['Line2']),
@@ -53,12 +58,38 @@ class MockTicketRepository(ITicketRepository):
             dummy_ticket = VirtualQueueTicket(group_id, 3, 60)
             archived = ArchivedTicket(dummy_ticket, group_id, engineer_id, points)
             self._archive.append(archived)
+
+        # CRUCIAL STEP: populating Resource_SkillGroup based on archived tickets
+        # This set will store unique (resourceID, skillGroupID) pairs
+        inferred_skills = set()
+        rsg_id_generator = itertools.count(1)
+
+        for archived_ticket in self._archive:
+            resource_id = archived_ticket.resourceID
+            skill_group_id = archived_ticket.skillGroupID
+
+            relationship_key = (resource_id, skill_group_id)
+
+            if relationship_key not in inferred_skills:
+                # The engineer has successfully closed a ticket for this skill group,
+                # so we record this relationship
+                inferred_skills.add(relationship_key)
+
+                # Create the Resource_SkillGroup record with a unique ID
+                new_rsg_id = f"RS{next(rsg_id_generator):03d}"
+                rsg = Resource_SkillGroup(new_rsg_id, skill_group_id, resource_id)
+                self._resource_skill_groups.append(rsg)
+
     
     def get_skill_groups(self) -> list[SkillGroup]:
         return list(self._skill_groups.values())
     
     def get_resources(self) -> list[Resource]:
         return list(self._resources.values())
+    
+    def get_resources_skillgroups(self) -> list[Resource_SkillGroup]:
+        """ Returns the list of Resource_SkillGroup records (the M:M mapping). """
+        return self._resource_skill_groups
     
     def get_virtual_queue_tickets(self) -> list[VirtualQueueTicket]:
         # Return sorted by priority (e.g., lower number is higher priority)

@@ -50,6 +50,14 @@ def get_resources():
     serialized_resources = [resource.to_dict() for resource in resources]
     return jsonify({"resources": serialized_resources})
 
+@app.route('/api/resource_skillgroup', methods=['GET'])
+def get_resource_skillgroup():
+    """ GET endpoint to display the current resource_skillgroup"""
+    res_skillG = repository.get_resources_skillgroups()
+    #Serialize the resource_skillGroup to a list of dicts for JSON output
+    serialized_res_skillG = [resSkillG.to_dict() for resSkillG in res_skillG]
+    return jsonify({"resource & skill groups": serialized_res_skillG})
+
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     """
