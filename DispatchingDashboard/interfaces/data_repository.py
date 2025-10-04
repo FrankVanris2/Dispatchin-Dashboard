@@ -1,5 +1,5 @@
 # Defining the Interface that will cause loose coupling
-from models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
+from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
 from abc import ABC, abstractmethod
 
 

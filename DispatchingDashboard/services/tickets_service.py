@@ -1,6 +1,6 @@
 # This is the Ticket Service (CORE Business Logic that is necessary)
 from interfaces.data_repository import ITicketRepository
-from models import ArchivedTicket
+from mockrepo.models import ArchivedTicket
 
 class TicketService:
     """ Handles the business logic: calculating points, moving data, and aggregation. """
@@ -14,7 +14,8 @@ class TicketService:
     def get_points_for_skill_group(self, skill_group_id: str) -> int:
         """ Implements the gamification logic (Line 1=100, Line 2=200, etc.). """
         # Mapping skill group IDs (e.g., 'L1') to point values (e.g., 100)
-        return self._points_map.get(skill_group_id, 0)
+        points = int(skill_group_id[1:]) * 100 # Currently not the best solution so will need a change in the future
+        return self._points_map.get(skill_group_id, points) # will need a change later
     
     def close_and_archive_ticket(self,ticket_id: str, resource_id: str) -> ArchivedTicket:
         """
@@ -33,7 +34,7 @@ class TicketService:
         points = self.get_points_for_skill_group(ticket_to_close.skillGroupID)
 
         #3. Create archived record
-        archived_ticket = ArchivedTicket(ticket_to_close, resource_id, points)
+        archived_ticket = ArchivedTicket(ticket_to_close, ticket_to_close.skillGroupID, resource_id, points)
 
         #4. Archive it
         self._repo.archive_ticket(archived_ticket)
@@ -73,5 +74,4 @@ class TicketService:
             })
         
         # Rank the results (highest points first)
-        leaderboard_data.append({"message": "Use a filter for SkillGroup to add the grouping requirement."})
         return sorted(leaderboard_data, key=lambda x: x['total_points'], reverse=True)        

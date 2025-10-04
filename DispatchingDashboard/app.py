@@ -1,11 +1,8 @@
 # The Main Flask Server for the thing to run locally. Will do things through Azure later.
 
 from flask import Flask, jsonify, request
-from services.repositories.mock_repository import MockTicketRepository
+from repositories.mock_repository import MockTicketRepository
 from services.tickets_service import TicketService
-from models import SkillGroup, Resource
-import uuid
-from datetime import datetime
 
 # --- Dependency Injection Setup ---
 # In a full application, the repository would be injected based on the environment (test/prod)
@@ -28,6 +25,30 @@ def get_queue():
     #Serialize the tickets to a list of dicts for JSON output
     serialized_tickets = [ticket.to_dict() for ticket in queue_tickets]
     return jsonify({"queue": serialized_tickets})
+
+@app.route('/api/archived', methods=['GET'])
+def get_archived():
+    """ Get endpoint to display the current archived tickets in the archived table. """
+    archived_tickets = repository.get_archived_tickets()
+    #Serialize the tickets to a list of dicts for JSON output
+    serialized_archived_tickets = [ticket.to_dict() for ticket in archived_tickets]
+    return jsonify({"archived tickets": serialized_archived_tickets})
+
+@app.route('/api/skillGroup', methods=['GET'])
+def get_skill_group():
+    """ Get endpoint to display the current skillGroups """
+    skill_groups = repository.get_skill_groups()
+    #Serialize the skill group to a list of dicts for JSON output
+    serialized_skill_group = [skill.to_dict() for skill in skill_groups]
+    return jsonify({"skill groups": serialized_skill_group})
+
+@app.route('/api/resources', methods=['GET'])
+def get_resources():
+    """ GET endpoint to display the current resources """
+    resources = repository.get_resources()
+    #Serialize the resources to a list of dicts for JSON output
+    serialized_resources = [resource.to_dict() for resource in resources]
+    return jsonify({"resources": serialized_resources})
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
@@ -97,7 +118,7 @@ def simulate_closure():
 
         return jsonify({
             "success": True,
-            "message": f"SIMULATED: Ticket {ticket_to_close.ticketID} (SkillGroup: {ticket_to_close.SkillGroupID}) closed by {resource_id}.",
+            "message": f"SIMULATED: Ticket {ticket_to_close.ticketID} (SkillGroup: {ticket_to_close.skillGroupID}) closed by {resource_id}.",
             "points_awarded": archived_ticket.points_awarded,
             "leaderboard_status": ticket_service.calculate_leaderboard()
         })

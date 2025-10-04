@@ -1,6 +1,6 @@
 # Mock Repository for the foundation of the different tables that was given
 from interfaces.data_repository import ITicketRepository
-from models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
+from mockrepo.models import SkillGroup, Resource, VirtualQueueTicket, ArchivedTicket
 import random
 
 # Tables VirtualQueueTicket, ArchivedTicket, SkillGroup, Resource, Resource_SkillGroup
@@ -26,9 +26,9 @@ class MockTicketRepository(ITicketRepository):
     def initialize_mock_data(self):
         """ Pre-populate data for demonstration. """
         self._skill_groups = {
-            'L1': SkillGroup('L1', 'Line 1 (Easiest)', self._points_map['Line1']),
-            'L2': SkillGroup('L2', 'Line 2 (Medium)', self._points_map['Line2']),
-            'L3': SkillGroup('L3', 'Line 3 (Hardest)', self._points_map['Line3'])
+            'L1': SkillGroup('L1', 'Line1 (Easiest)', self._points_map['Line1']),
+            'L2': SkillGroup('L2', 'Line2 (Medium)', self._points_map['Line2']),
+            'L3': SkillGroup('L3', 'Line3 (Hardest)', self._points_map['Line3'])
         }
         self._resources = {
             'R001': Resource('R001', 'Adela Parkson'),
@@ -51,14 +51,14 @@ class MockTicketRepository(ITicketRepository):
 
             # Create a dummy ticket to archive
             dummy_ticket = VirtualQueueTicket(group_id, 3, 60)
-            archived = ArchivedTicket(dummy_ticket, engineer_id, points)
+            archived = ArchivedTicket(dummy_ticket, group_id, engineer_id, points)
             self._archive.append(archived)
     
     def get_skill_groups(self) -> list[SkillGroup]:
         return list(self._skill_groups.values())
     
     def get_resources(self) -> list[Resource]:
-        return list(self._resources.value())
+        return list(self._resources.values())
     
     def get_virtual_queue_tickets(self) -> list[VirtualQueueTicket]:
         # Return sorted by priority (e.g., lower number is higher priority)

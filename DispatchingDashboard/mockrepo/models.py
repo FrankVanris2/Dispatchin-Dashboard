@@ -62,6 +62,7 @@ class ArchivedTicket(VirtualQueueTicket): # Most likely need to update I believe
         # Include base and archived fields
         data = super().to_dict()
         data.update({
+            "skillGroupID": self.skillGroupID,
             "resourceID": self.resourceID,
             "actual_minutes": self.actual_minutes,
             "status": self.status,
