@@ -33,7 +33,8 @@ class MockTicketRepository(ITicketRepository):
         self._resources = {
             'R001': Resource('R001', 'Adela Parkson'),
             'R002': Resource('R002', 'Christian Mad'),
-            'R003': Resource('R003', 'Jason Statham')
+            'R003': Resource('R003', 'Jason Statham'),
+            'R004': Resource('R004', 'Frank Vanris')
         }
 
         # Adding some initial tickets to the queue (All randomized)
